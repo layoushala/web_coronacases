@@ -5,9 +5,9 @@ import reportWebVitals from './reportWebVitals';
 import DataTable from './View/datatable/datatable.js';
 
 ReactDOM.render(
-  <React.StrictMode>
+ 
     <DataTable />
-  </React.StrictMode>,
+ ,
   document.getElementById('root')
 );
 
