@@ -9,11 +9,11 @@ import configData from "../../../config.json";
          +"/" + configData.API_PATH ;
       }; 
     
-      async  coronacases (start,size,region=""){
+      async  coronacases (start,size,region="",sortField = null, sortOrder = 'asc'){
         const API = this.getRoot();
-       
+        console.log(API+"/corona-cases?start="+start+"&size="+size+"&region="+region+"&sortField="+sortField+"&sortOrder="+sortOrder);
         try {
-          const response = await fetch(API+"/corona-cases?start="+start+"&size="+size+"&region="+region);
+          const response = await fetch(API+"/corona-cases?start="+start+"&size="+size+"&region="+region+"&sortField="+sortField+"&sortOrder="+sortOrder);
           if (!response.ok) {
             throw Error();
           }

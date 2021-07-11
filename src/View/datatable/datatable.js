@@ -8,8 +8,9 @@ const cServ = new coronacasesService();
 
 
 
-function loadServerRows(page) {
-  const response = cServ.coronacases(page,10,"");
+function loadServerRows(page,sortModel) {
+  console.log(sortModel[0]);
+  const response = cServ.coronacases(page,10,"",sortModel[0].field,sortModel[0].sort);
   console.log(response);
   return response;
 }
@@ -24,13 +25,24 @@ const columns = [
 export default function DataTable() {
  
   
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const [total, setTotal] = React.useState(0);
   const [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [sortModel, setSortModel] = React.useState([
+    { field: 'confirmedCases', sort: 'asc' },
+  ]);
   
   const handlePageChange = (params) => {
+    console.log(params)
     setPage(params.page);
+  };
+
+  const handleSortModelChange = (params) => {
+    console.log(params);
+    if (params.sortModel !== sortModel) {
+      setSortModel(params.sortModel);
+    }
   };
 
   React.useEffect(() => {
@@ -39,7 +51,7 @@ export default function DataTable() {
    
     (async () => {
       setLoading(true);
-      const newRows = await loadServerRows(page);
+      const newRows = await loadServerRows(page,sortModel);
       console.log(total)
       if (!active) {
       
@@ -62,10 +74,10 @@ export default function DataTable() {
      
       active = false;
     };
-  }, [page,total]);
+  }, [page,total,sortModel]);
  
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <div style={{ height: 650, width: '100%' }}>
       <DataGrid
         disableColumnMenu 
         rows={rows}
@@ -75,6 +87,8 @@ export default function DataTable() {
         rowCount={total}
         paginationMode="server"
         onPageChange={handlePageChange}
+        sortModel={sortModel}
+        onSortModelChange={handleSortModelChange}
         loading={loading}
       />
     </div>
