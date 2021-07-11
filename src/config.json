@@ -1,0 +1,8 @@
+{
+    "API_CONFIG": {
+      "API_PROTOCOL": "http",
+      "API_IP": "localhost",
+      "API_PORT": "8084",
+      "API_PATH": "API_CORONA_CASES"
+    }
+}
