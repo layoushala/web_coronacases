@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import DataTable from './View/datatable/datatable.js';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <DataTable />
   </React.StrictMode>,
   document.getElementById('root')
 );
