@@ -15,11 +15,12 @@ import configData from "../../../config.json";
         try {
           const response = await fetch(API+"/corona-cases?start="+start+"&size="+size+"&region="+region+"&sortField="+sortField+"&sortOrder="+sortOrder);
           if (!response.ok) {
-            throw Error();
+            throw Error("Failed coronacases API");
           }
           return response.json();
         } catch (error) {
           console.log(error);
+          return null;
         }
         
       };
@@ -34,6 +35,7 @@ import configData from "../../../config.json";
           return response.json();
         } catch (error) {
           console.log(error);
+          return null;
         }
         
       };
@@ -43,11 +45,12 @@ import configData from "../../../config.json";
         try {
           const response = await fetch(API+"/corona-cases/regions");
           if (!response.ok) {
-            throw Error();
+            throw Error("Failed get Regions API");
           }
           return response.json();
         } catch (error) {
           console.log(error);
+          return null;
         }
         
       };

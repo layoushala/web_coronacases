@@ -52,6 +52,7 @@ function CountryDetails(props) {
   const [rows, setRows] = React.useState([]);
   //const [country, setCountry] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [jsError, setJsError] = React.useState({ foundError: false, msg: '' });
 
   let history = useHistory();
   const goToPreviousPath = () => {
@@ -69,11 +70,17 @@ function CountryDetails(props) {
       if (!active) {
         return;
       }
-      if (typeof (newRows) != "undefined") {
+      if (typeof (newRows) != "undefined" && newRows != null) {
         setRows(newRows);       
-        setLoading(false);
+        
+      }else{
+        
+          setJsError({ foundError: true, msg: 'Failed Country Details API' })
+          setLoading(false);
+          return;
+        
       }
-
+      setLoading(false);
     })();
 
     return () => {
@@ -85,6 +92,14 @@ function CountryDetails(props) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
+      {jsError.foundError && jsError.msg ? (
+        <div>
+          <p>Caught an Error:</p>
+          <div>
+            {jsError.msg}
+          </div>
+        </div>
+      ) : (
       <Grid container spacing={3}>
         <Grid item xs={12} >
           <Paper className={classes.paperflex}>
@@ -120,7 +135,7 @@ function CountryDetails(props) {
           
           </Paper>
         </Grid>  
-      </Grid>
+      </Grid>)}
     </div>)
   }
   
