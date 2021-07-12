@@ -143,7 +143,7 @@ export default function CountriesCases(props) {
       countries = JSON.parse(localStorage.getItem("fvList"));
       let index = countries.indexOf(countries.find(x=> x === event.currentTarget.value))
     
-      if(index == -1){
+      if(index === -1){
         countries.push(event.currentTarget.value);
       }
       
@@ -157,7 +157,7 @@ export default function CountriesCases(props) {
       countries = JSON.parse(localStorage.getItem("fvList"));
       let index = countries.indexOf(countries.find(x=> x === event.currentTarget.value))
     
-      if(index != -1){
+      if(index !== -1){
         countries.splice(index,1);
       }
      

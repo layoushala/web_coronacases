@@ -80,7 +80,7 @@ function CountryDetails(props) {
 
       active = false;
     };
-  }, []);
+  }, [country]);
 
   const classes = useStyles();
   return (
