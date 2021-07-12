@@ -23,6 +23,20 @@ import configData from "../../../config.json";
         }
         
       };
+
+      async  countryDetails (country){
+        const API = this.getRoot();        
+        try {
+          const response = await fetch(API+"/corona-cases/country-details/"+country);
+          if (!response.ok) {
+            throw Error();
+          }
+          return response.json();
+        } catch (error) {
+          console.log(error);
+        }
+        
+      };
     
      async  regions (){
         const API = this.getRoot();
