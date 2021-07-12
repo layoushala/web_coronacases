@@ -8,6 +8,8 @@ import { Select, InputLabel , IconButton } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Box from '@material-ui/core/Box';
 import DetailsIcon from '@material-ui/icons/Details';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 
 
 const cServ = new coronacasesService();
@@ -63,27 +65,64 @@ export default function CountriesCases(props) {
     { field: 'confirmedCases', headerName: 'Confirmed Cases', flex: 1 },
     { field: 'recoveredCases', headerName: 'Recovered Cases', flex: 1 },
     { field: 'deathCases', headerName: 'Death Cases', flex: 1 },
-    {
-      field: 'detials',
-      headerName: 'Operations',
-       flex: 1,
-      renderCell:  (params) =>
-       (
-        <strong>
+   
+      {
+        field: 'favorite',
+        headerName: '  ',
+         flex: 1,
+        renderCell:  (params) =>
+         (
+          <Box display="flex" flexDirection="row" p={1} m={1} >
+          <Box p={1} >
+          <strong>
         
-          <IconButton 
-            variant="contained"
-            color="primary"
-            size="small"
-            style={{ marginLeft: 16 }}
-            value ={params.row.country}
-            onClick ={handleDetials}
-          >
-             <DetailsIcon />
-          </IconButton >
-        </strong>
-      ),
-      }
+        <IconButton 
+          variant="contained"
+          color="primary"
+          size="small"
+          style={{ marginLeft: 16 }}
+          value ={params.row.country}
+          onClick ={handleDetials}
+        >
+           <DetailsIcon />
+        </IconButton >
+      </strong>
+          </Box>
+          <Box p={1} >
+          <strong>
+          
+            <IconButton 
+              variant="contained"
+              color="primary"
+              size="small"
+              style={{ marginLeft: 16 }}
+              value ={params.row.country}
+              onClick ={AddFavorite}
+            >
+             <FavoriteIcon />
+            </IconButton >
+          </strong>
+          </Box>
+          <Box p={1} >
+          <strong>
+            
+            <IconButton 
+              variant="contained"
+              color="primary"
+              size="small"
+              style={{ marginLeft: 16 }}
+              value ={params.row.country}
+              onClick ={deleteFavorite}
+            >
+               <FavoriteBorderIcon/>
+            </IconButton >
+          </strong>
+          </Box>
+          
+          </Box>
+        ),
+        },
+       
        
     
   ];
@@ -93,6 +132,37 @@ export default function CountriesCases(props) {
       pathname:"/country",
       state: event.currentTarget.value
      });
+  };
+
+  const AddFavorite  = (event) => {
+    var countries =[];
+    if(localStorage.getItem("fvList") == null){
+      countries.push(event.currentTarget.value);
+      localStorage.setItem("fvList", JSON.stringify(countries));
+    }else{
+      countries = JSON.parse(localStorage.getItem("fvList"));
+      let index = countries.indexOf(countries.find(x=> x === event.currentTarget.value))
+    
+      if(index == -1){
+        countries.push(event.currentTarget.value);
+      }
+      
+      localStorage.setItem("fvList", JSON.stringify(countries));
+    }
+  };
+  const deleteFavorite  = (event) => {
+    var countries =[];
+    if(localStorage.getItem("fvList") != null){
+      
+      countries = JSON.parse(localStorage.getItem("fvList"));
+      let index = countries.indexOf(countries.find(x=> x === event.currentTarget.value))
+    
+      if(index != -1){
+        countries.splice(index,1);
+      }
+     
+      localStorage.setItem("fvList", JSON.stringify(countries));
+    }
   };
 
   const handlePageChange = (params) => {
