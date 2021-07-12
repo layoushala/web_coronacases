@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 
 function loadServerRows(page, sortModel, region) {
 
-  const response = cServ.coronacases(page, 10, region, sortModel[0].field, sortModel[0].sort);
+  const response = cServ.coronacases(page, 10, region === "All" ?'':region, sortModel[0].field, sortModel[0].sort);
 
   return response;
 }
@@ -45,6 +45,22 @@ function loadRegions() {
 }
 
 
+function isCountryFounded(country){
+  var countries = [];
+    if (localStorage.getItem("fvList") == null) {
+        return false;
+    } 
+      countries = JSON.parse(localStorage.getItem("fvList"));
+      let index = countries.indexOf(countries.find(x => x === country))
+
+      if (index === -1) {
+       return false;
+      }
+
+      return true;
+}
+
+ 
 
 export default function CountriesCases(props) {
   const classes = useStyles();
@@ -57,9 +73,67 @@ export default function CountriesCases(props) {
   const [sortModel, setSortModel] = React.useState([
     { field: 'confirmedCases', sort: 'asc' },
   ]);
-  const [region, setRegion] = React.useState('');
+  const [region, setRegion] = React.useState('All');
+  const [favList, setFavList] = React.useState(JSON.parse(localStorage.getItem("fvList")))
   const [jsError, setJsError] = React.useState({ foundError: false, msg: '' });
 
+
+  const operationCell =(params)=>{
+     
+      return(            
+       <Box display="flex" flexDirection="row" p={1} m={1} >
+         <Box p={1} >
+           <strong>
+   
+             <IconButton
+               variant="contained"
+               color="primary"
+               size="small"
+               style={{ marginLeft: 16 }}
+               value={params.row.country}
+               onClick={handleDetials}
+             >
+               <DetailsIcon />
+             </IconButton >
+           </strong>
+         </Box>
+         <Box p={1} >
+           <strong>
+             {favList.includes(params.row.country) ? (<IconButton
+               variant="contained"
+               color="primary"
+               size="small"
+               style={{ marginLeft: 16 }}
+               value={params.row.country}
+               onClick={deleteFavorite}
+             >
+               <FavoriteIcon />
+             </IconButton >) : 
+             ( <IconButton
+              variant="contained"
+              color="primary"
+              size="small"
+              style={{ marginLeft: 16 }}
+              value={params.row.country}
+              onClick={AddFavorite}
+            >
+              <FavoriteBorderIcon />
+            </IconButton >)
+          }
+             
+           </strong>
+         </Box>
+         <Box p={1} >
+           <strong>
+   
+            
+           </strong>
+         </Box>
+   
+       </Box>
+     )
+  
+  }
   const columns = [
     { field: 'country', headerName: 'Country', flex: 1, sortable: false, },
 
@@ -68,103 +142,55 @@ export default function CountriesCases(props) {
     { field: 'deathCases', headerName: 'Death Cases', flex: 1 },
 
     {
-      field: 'favorite',
+      field: 'operation',
       headerName: '  ',
       flex: 1,
-      renderCell: (params) =>
-        (
-          <Box display="flex" flexDirection="row" p={1} m={1} >
-            <Box p={1} >
-              <strong>
-
-                <IconButton
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  style={{ marginLeft: 16 }}
-                  value={params.row.country}
-                  onClick={handleDetials}
-                >
-                  <DetailsIcon />
-                </IconButton >
-              </strong>
-            </Box>
-            <Box p={1} >
-              <strong>
-
-                <IconButton
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  style={{ marginLeft: 16 }}
-                  value={params.row.country}
-                  onClick={AddFavorite}
-                >
-                  <FavoriteIcon />
-                </IconButton >
-              </strong>
-            </Box>
-            <Box p={1} >
-              <strong>
-
-                <IconButton
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  style={{ marginLeft: 16 }}
-                  value={params.row.country}
-                  onClick={deleteFavorite}
-                >
-                  <FavoriteBorderIcon />
-                </IconButton >
-              </strong>
-            </Box>
-
-          </Box>
-        ),
+      renderCell: operationCell      
+        
     },
+    ];
+    const handleDetials = (event) => {
 
-
-
-  ];
-  const handleDetials = (event) => {
-
-    props.history.push({
-      pathname: "/country",
-      state: event.currentTarget.value
-    });
-  };
-
-  const AddFavorite = (event) => {
-    var countries = [];
-    if (localStorage.getItem("fvList") == null) {
-      countries.push(event.currentTarget.value);
-      localStorage.setItem("fvList", JSON.stringify(countries));
-    } else {
-      countries = JSON.parse(localStorage.getItem("fvList"));
-      let index = countries.indexOf(countries.find(x => x === event.currentTarget.value))
-
-      if (index === -1) {
+      props.history.push({
+        pathname: "/country",
+        state: event.currentTarget.value
+      });
+    };
+  
+    const AddFavorite = (event) => {
+      console.log(event.currentTarget);
+      var countries = [];
+      if (localStorage.getItem("fvList") == null) {
         countries.push(event.currentTarget.value);
+        localStorage.setItem("fvList", JSON.stringify(countries));
+      } else {
+        countries = JSON.parse(localStorage.getItem("fvList"));
+        let index = countries.indexOf(countries.find(x => x === event.currentTarget.value))
+  
+        if (index === -1) {
+          countries.push(event.currentTarget.value);
+        }
+  
+        localStorage.setItem("fvList", JSON.stringify(countries));
+        setFavList(countries);
       }
-
-      localStorage.setItem("fvList", JSON.stringify(countries));
-    }
-  };
-  const deleteFavorite = (event) => {
-    var countries = [];
-    if (localStorage.getItem("fvList") != null) {
-
-      countries = JSON.parse(localStorage.getItem("fvList"));
-      let index = countries.indexOf(countries.find(x => x === event.currentTarget.value))
-
-      if (index !== -1) {
-        countries.splice(index, 1);
+    };
+    const deleteFavorite = (event) => {
+      var countries = [];
+      if (localStorage.getItem("fvList") != null) {
+  
+        countries = JSON.parse(localStorage.getItem("fvList"));
+        let index = countries.indexOf(countries.find(x => x === event.currentTarget.value))
+  
+        if (index !== -1) {
+          countries.splice(index, 1);
+        }
+  
+        localStorage.setItem("fvList", JSON.stringify(countries));
+        setFavList(countries);
       }
-
-      localStorage.setItem("fvList", JSON.stringify(countries));
-    }
-  };
+    };
+  
 
   const handlePageChange = (params) => {
 
@@ -190,6 +216,7 @@ export default function CountriesCases(props) {
 
       const allRegions = await loadRegions();
       if (typeof (allRegions) != "undefined" && allRegions != null) {
+        allRegions.unshift('All');
         var regionList = allRegions.map(function (r, index) {
           return <MenuItem key={index} value={r}>{r}</MenuItem>;
         });
