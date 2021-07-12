@@ -32,8 +32,13 @@ const useStyles = makeStyles((theme) => ({
 
 
 function loadServerRows(page, sortModel, region) {
-
-  const response = cServ.coronacases(page, 10, region === "All" ?'':region, sortModel[0].field, sortModel[0].sort);
+  let sortField = '';
+  let sortOrder = '';
+  if(sortModel.length){
+    sortField = sortModel[0].field;
+    sortOrder = sortModel[0].sort;
+  }
+  const response = cServ.coronacases(page, 10, region === "All" ?'':region, sortField, sortOrder);
 
   return response;
 }
@@ -44,23 +49,6 @@ function loadRegions() {
   ;
 }
 
-
-function isCountryFounded(country){
-  var countries = [];
-    if (localStorage.getItem("fvList") == null) {
-        return false;
-    } 
-      countries = JSON.parse(localStorage.getItem("fvList"));
-      let index = countries.indexOf(countries.find(x => x === country))
-
-      if (index === -1) {
-       return false;
-      }
-
-      return true;
-}
-
- 
 
 export default function CountriesCases(props) {
   const classes = useStyles();
@@ -198,8 +186,9 @@ export default function CountriesCases(props) {
   };
 
   const handleSortModelChange = (params) => {
-
+  
     if (params.sortModel !== sortModel) {
+     
       setSortModel(params.sortModel);
     }
   };
